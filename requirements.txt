@@ -1,9 +1,5 @@
 fastapi
 uvicorn
-langchain
-langchain-groq
-langchain-community
-faiss-cpu
 groq
 psycopg2-binary
 sqlalchemy
@@ -13,6 +9,4 @@ asyncpg
 greenlet
 pydantic
 yfinance
-langchain-text-splitters
 langgraph
-langchain-huggingface
