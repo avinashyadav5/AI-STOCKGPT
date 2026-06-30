@@ -50,34 +50,34 @@
 ┌─────────────────────────────────────────────────────────────┐
 │                     FRONTEND (React + Vite)                 │
 │                                                             │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐        │
 │  │Dashboard │ │  Chat AI │ │  Charts  │ │Portfolio │  ...   │
-│  └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘       │
-│       │             │            │             │             │
-│       └─────────────┴──────┬─────┴─────────────┘             │
-│                            │                                 │
-│                    Yahoo Finance API                         │
-│                  (via Vite dev proxy)                         │
-│                 Live quotes, charts, FX                       │
+│  └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘        │
+│       │             │            │             │            │
+│       └─────────────┴──────┬─────┴─────────────┘            │
+│                            │                                │
+│                    Yahoo Finance API                        │
+│                  (via Vite dev proxy)                       │
+│                 Live quotes, charts, FX                     │
 └────────────────────────┬────────────────────────────────────┘
                          │ HTTP (REST)
 ┌────────────────────────┴────────────────────────────────────┐
-│                  BACKEND (FastAPI + Python)                  │
+│                  BACKEND (FastAPI + Python)                 │
 │                                                             │
-│  ┌─────────────┐  ┌──────────────┐  ┌───────────────────┐  │
-│  │  NLP Layer  │  │  ReAct Agent │  │   RAG Pipeline    │  │
-│  │ (Groq 8B)   │  │ (LangGraph)  │  │ (FAISS + HFEmb)  │  │
-│  │ Intent +    │  │              │  │ SEC 10-K filings  │  │
-│  │ Ticker      │  │ ┌──────────┐ │  │ Vector similarity │  │
-│  │ Extraction  │  │ │  Tools:  │ │  │ search            │  │
-│  └─────────────┘  │ │• News    │ │  └───────────────────┘  │
+│  ┌─────────────┐  ┌──────────────┐  ┌───────────────────┐   │
+│  │  NLP Layer  │  │  ReAct Agent │  │   RAG Pipeline    │   │
+│  │ (Groq 8B)   │  │ (LangGraph)  │  │ (FAISS + HFEmb)   │   │
+│  │ Intent +    │  │              │  │ SEC 10-K filings  │   │
+│  │ Ticker      │  │ ┌──────────┐ │  │ Vector similarity │   │
+│  │ Extraction  │  │ │  Tools:  │ │  │ search            │   │
+│  └─────────────┘  │ │• News    │ │  └───────────────────┘   │
 │                   │ │• Finance │ │                          │
-│  ┌─────────────┐  │ │• Profile │ │  ┌───────────────────┐  │
-│  │  Services   │  │ │• RAG     │ │  │    PostgreSQL     │  │
-│  │ yfinance    │  │ └──────────┘ │  │  Chat history     │  │
-│  │ Finnhub     │  └──────────────┘  │  Watchlist         │  │
-│  │ FX rates    │                    │  Portfolio          │  │
-│  └─────────────┘                    └───────────────────┘  │
+│  ┌─────────────┐  │ │• Profile │ │  ┌───────────────────┐   │
+│  │  Services   │  │ │• RAG     │ │  │    PostgreSQL     │   │
+│  │ yfinance    │  │ └──────────┘ │  │  Chat history     │   │
+│  │ Finnhub     │  └──────────────┘  │  Watchlist        │   │
+│  │ FX rates    │                    │  Portfolio        │   │
+│  └─────────────┘                    └───────────────────┘   │
 └─────────────────────────────────────────────────────────────┘
 ```
 
