@@ -12,7 +12,6 @@ from services import (
     get_fmp_income_statement, get_fmp_balance_sheet,
     get_fmp_cash_flow, get_fmp_ratios, get_explorer_stats
 )
-import yfinance as yf
 from ai_pipeline import get_intent_and_ticker, run_ai_agent, analyze_news_sentiment
 from report_generator import generate_investment_report
 from rag import get_available_tickers
@@ -99,8 +98,8 @@ def add_watchlist(req: WatchlistRequest, db: Session = Depends(get_db)):
     converted_cost = req.avg_cost
     try:
         if req.currency and req.currency != "USD":
-            rate_info = yf.Ticker(f"{req.currency}USD=X").info
-            rate = rate_info.get("regularMarketPrice") or rate_info.get("previousClose") or 1.0
+            from services import get_usd_rate
+            rate = get_usd_rate(req.currency)
             converted_cost = str(float(req.avg_cost) * rate)
     except Exception as e:
         print(f"Currency Conversion Error: {e}")
