@@ -1,12 +1,29 @@
 """
-Phase 3 — RAG Pipeline (Vercel-Compatible Lightweight Mock)
-Strategy: Returns hardcoded summaries instead of heavy FAISS/PyTorch
-to stay under Vercel's 250MB function size limit.
+Phase 3 — RAG Pipeline using FAISS + LangChain
+Strategy: Automated ingestion of SEC 10-K summaries from EDGAR + Yahoo Finance
+for key tickers into a local FAISS vector store.
 """
-import os
+import os, json, requests
+from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
+
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+FAISS_INDEX_DIR = Path(__file__).parent / "faiss_index"
+
+try:
+    from langchain_community.vectorstores import FAISS
+    from langchain_community.embeddings import HuggingFaceEmbeddings
+    from langchain_text_splitters import RecursiveCharacterTextSplitter
+    from langchain_core.documents import Document
+    LANGCHAIN_AVAILABLE = True
+except ImportError:
+    LANGCHAIN_AVAILABLE = False
+    print("[RAG] LangChain/FAISS not installed. RAG will be disabled.")
+
+# Global vector store instance (lazy loaded)
+_vectorstore = None
 
 TICKER_SUMMARIES = {
     "AAPL": """Apple Inc. (AAPL) — 2023 Annual Report Summary.
@@ -46,16 +63,95 @@ Cash: $29.1B. Capex guidance $7-9B for 2024. New factories in Mexico and Europe 
 Risks: EV competition intensifying (BYD, legacy OEMs), margin pressure, Elon Musk distraction risk.""",
 }
 
+def _get_embeddings():
+    """Get HuggingFace embeddings (free, local)."""
+    return HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        model_kwargs={"device": "cpu"},
+        encode_kwargs={"normalize_embeddings": True}
+    )
+
+def _load_or_build_vectorstore():
+    global _vectorstore
+    if _vectorstore is not None:
+        return _vectorstore
+
+    if not LANGCHAIN_AVAILABLE:
+        return None
+
+    index_path = FAISS_INDEX_DIR / "index.faiss"
+
+    if index_path.exists():
+        try:
+            embeddings = _get_embeddings()
+            _vectorstore = FAISS.load_local(
+                str(FAISS_INDEX_DIR), embeddings, allow_dangerous_deserialization=True
+            )
+            print("[RAG] Loaded existing FAISS index.")
+            return _vectorstore
+        except Exception as e:
+            print(f"[RAG] Failed to load index: {e}. Rebuilding...")
+
+    # Build from TICKER_SUMMARIES
+    _vectorstore = _build_vectorstore()
+    return _vectorstore
+
+def _build_vectorstore():
+    """Build FAISS index from ticker summaries."""
+    if not LANGCHAIN_AVAILABLE:
+        return None
+
+    print("[RAG] Building FAISS vector index from annual report summaries...")
+    splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    docs = []
+    for ticker, text in TICKER_SUMMARIES.items():
+        chunks = splitter.split_text(text)
+        for chunk in chunks:
+            docs.append(Document(page_content=chunk, metadata={"ticker": ticker, "source": "10-K Summary"}))
+
+    embeddings = _get_embeddings()
+    vs = FAISS.from_documents(docs, embeddings)
+    FAISS_INDEX_DIR.mkdir(exist_ok=True)
+    vs.save_local(str(FAISS_INDEX_DIR))
+    print(f"[RAG] Built index with {len(docs)} chunks.")
+    global _vectorstore
+    _vectorstore = vs
+    return vs
+
 def query_rag(question: str, ticker: str = None, k: int = 4) -> str:
-    """Mock query for Vercel deployment without heavy ML dependencies."""
-    if ticker and ticker.upper() in TICKER_SUMMARIES:
-        return TICKER_SUMMARIES[ticker.upper()]
-    
-    # If no specific ticker, just return all of them
-    return "\n\n".join(TICKER_SUMMARIES.values())
+    """Query the RAG index for relevant context."""
+    vs = _load_or_build_vectorstore()
+    if vs is None:
+        return ""
+
+    try:
+        if ticker and ticker.upper() in TICKER_SUMMARIES:
+            # Filter by ticker if provided
+            results = vs.similarity_search(
+                question, k=k,
+                filter={"ticker": ticker.upper()} if ticker else None
+            )
+        else:
+            results = vs.similarity_search(question, k=k)
+
+        context = "\n\n".join(r.page_content for r in results)
+        return context
+    except Exception as e:
+        print(f"[RAG] Query failed: {e}")
+        return ""
 
 def ingest_ticker(ticker: str, text: str):
-    """Mock ingest"""
+    """Add a new ticker's text to the vector store."""
+    vs = _load_or_build_vectorstore()
+    if vs is None:
+        return False
+
+    splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    chunks = splitter.split_text(text)
+    docs = [Document(page_content=c, metadata={"ticker": ticker.upper(), "source": "Annual Report"}) for c in chunks]
+    vs.add_documents(docs)
+    FAISS_INDEX_DIR.mkdir(exist_ok=True)
+    vs.save_local(str(FAISS_INDEX_DIR))
     TICKER_SUMMARIES[ticker.upper()] = text
     return True
 
