@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+langchain
+langchain-groq
+langchain-community
+faiss-cpu
+groq
+psycopg2-binary
+sqlalchemy
+python-dotenv
+requests
+asyncpg
+greenlet
+pydantic
+yfinance
