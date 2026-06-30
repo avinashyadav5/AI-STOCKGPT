@@ -9,13 +9,15 @@
 </p>
 
 <p align="center">
+  <b>🟢 Live Demo: <a href="https://ai-stockgpt.vercel.app/">https://ai-stockgpt.vercel.app/</a></b>
+</p>
+
+<p align="center">
   <a href="#features">Features</a> •
   <a href="#architecture">Architecture</a> •
   <a href="#tech-stack">Tech Stack</a> •
   <a href="#getting-started">Getting Started</a> •
-  <a href="#project-structure">Project Structure</a> •
-  <a href="#api-reference">API Reference</a> •
-  <a href="#license">License</a>
+  <a href="#deployment">Deployment</a>
 </p>
 
 ---
@@ -177,6 +179,22 @@ npm run dev
 - **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:8000
 - **API Docs (Swagger)**: http://localhost:8000/docs
+
+---
+
+## ☁️ Deployment
+
+Due to Vercel's 250MB serverless function limit, the application is designed to be deployed across two platforms:
+
+### 1. Backend (Render)
+The FastAPI backend is deployed as a Web Service on **Render** (which easily handles the large Python dependencies for LangChain and FAISS on its free tier).
+- Configuration: `render.yaml`
+- Live URL: [https://ai-stockgpt-backend.onrender.com](https://ai-stockgpt-backend.onrender.com)
+
+### 2. Frontend (Vercel)
+The React/Vite frontend is deployed on **Vercel** for global edge caching and speed.
+- Configuration: `vercel.json` (Proxies all `/api/*` requests automatically to the Render backend to prevent CORS issues)
+- Live URL: [https://ai-stockgpt.vercel.app](https://ai-stockgpt.vercel.app)
 
 ---
 
