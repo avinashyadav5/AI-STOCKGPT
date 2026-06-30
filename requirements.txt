@@ -1,5 +1,8 @@
 fastapi
 uvicorn
+langchain
+langchain-groq
+langchain-community
 groq
 psycopg2-binary
 sqlalchemy
