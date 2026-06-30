@@ -48,10 +48,15 @@ export async function fetchMultipleQuotes(symbols) {
         if (!meta) return null;
         
         const rate = await getFxRate(meta.currency);
-        const price = meta.regularMarketPrice * rate;
-        const prev = (meta.previousClose || price) * rate;
-        const change = price - prev;
-        const pct = prev ? (change / prev) * 100 : 0;
+        
+        // Calculate % change from RAW native-currency values (FX cancels out in a ratio)
+        const rawPrice = meta.regularMarketPrice;
+        const rawPrev = meta.previousClose || meta.chartPreviousClose || rawPrice;
+        const pct = rawPrev ? ((rawPrice - rawPrev) / rawPrev) * 100 : 0;
+        
+        // Convert only the absolute values to USD
+        const price = rawPrice * rate;
+        const change = (rawPrice - rawPrev) * rate;
         
         return {
           symbol: meta.symbol,
