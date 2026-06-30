@@ -14,8 +14,8 @@ export default function ComparePage() {
   const fetchCompareData = async (ticker) => {
     try {
       const [profRes, finRes] = await Promise.all([
-        fetch(`http://127.0.0.1:8000/api/profile?ticker=${ticker}`),
-        fetch(`http://127.0.0.1:8000/api/financials?ticker=${ticker}`)
+        fetch(`/api/profile?ticker=${ticker}`),
+        fetch(`/api/financials?ticker=${ticker}`)
       ]);
       const profData = await profRes.json();
       const finData = await finRes.json();

@@ -12,7 +12,7 @@ export default function FinancialsPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/financials?ticker=${searchTicker}`);
+      const res = await fetch(`/api/financials?ticker=${searchTicker}`);
       const json = await res.json();
       setData(json);
     } catch (err) {

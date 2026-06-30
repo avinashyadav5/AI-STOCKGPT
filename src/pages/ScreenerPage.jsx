@@ -19,7 +19,7 @@ export default function ScreenerPage() {
           pe: filterPe,
           div: filterDiv
         }).toString();
-        const res = await fetch(`http://127.0.0.1:8000/api/screener?${query}`);
+        const res = await fetch(`/api/screener?${query}`);
         const data = await res.json();
         setFilteredStocks(data.results || []);
       } catch (e) {

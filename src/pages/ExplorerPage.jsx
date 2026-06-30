@@ -12,7 +12,7 @@ export default function ExplorerPage() {
   const fetchExplorerData = async (ticker) => {
     setLoading(true);
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/explorer?ticker=${ticker}`);
+      const res = await fetch(`/api/explorer?ticker=${ticker}`);
       const json = await res.json();
       setData(json.stats || {});
     } catch (err) {

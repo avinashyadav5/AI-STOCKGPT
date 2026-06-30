@@ -1,0 +1,15 @@
+{
+  "buildCommand": "npm run build:frontend",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "functions": {
+    "api/*.py": {
+      "runtime": "@vercel/python@4.0.0",
+      "maxDuration": 60
+    }
+  },
+  "rewrites": [
+    { "source": "/api/finance/:path*", "destination": "/api/yahoo" },
+    { "source": "/api/:path*", "destination": "/api/index" }
+  ]
+}

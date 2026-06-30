@@ -95,7 +95,7 @@ export default function App() {
     const id = setInterval(pollData, 15000);
 
     // Initial Watchlist load from DB
-    fetch("http://127.0.0.1:8000/api/watchlist")
+    fetch("/api/watchlist")
       .then(res => res.json())
       .then(data => {
         if (data && data.watchlist) {
@@ -158,7 +158,7 @@ export default function App() {
     }
     
     setWatchlist(prev => prev.filter(t => t !== ticker));
-    fetch(`http://127.0.0.1:8000/api/watchlist/${ticker}`, { method: 'DELETE' }).catch(console.error);
+    fetch(`/api/watchlist/${ticker}`, { method: 'DELETE' }).catch(console.error);
     setAlerts(prev => prev.filter(a => a.ticker !== ticker));
   };
 

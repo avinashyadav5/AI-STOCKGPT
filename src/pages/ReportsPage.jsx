@@ -23,7 +23,7 @@ export default function ReportsPage() {
   const { aiModelId, getAiPromptAddons, settings } = useSettings();
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/rag-status")
+    fetch("/api/rag-status")
       .then(r => r.json())
       .then(data => { if (data.tickers_with_rag) setRagTickers(data.tickers_with_rag); })
       .catch(() => {});
@@ -37,7 +37,7 @@ export default function ReportsPage() {
     setActiveReport(null);
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/generate_report", {
+      const res = await fetch("/api/generate_report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 

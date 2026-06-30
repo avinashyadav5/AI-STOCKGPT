@@ -11,7 +11,7 @@ export default function CompanyProfilePage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/profile?ticker=${searchTicker}`);
+      const res = await fetch(`/api/profile?ticker=${searchTicker}`);
       const json = await res.json();
       setData(json.profile || null);
     } catch (err) {

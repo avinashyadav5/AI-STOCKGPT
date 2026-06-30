@@ -53,7 +53,7 @@ export default function MarketsPage() {
       try {
         const results = await Promise.all(
           SECTOR_ETFS.map(async (sec) => {
-            const res = await fetch(`http://127.0.0.1:8000/api/profile?ticker=${sec.ticker}`);
+            const res = await fetch(`/api/profile?ticker=${sec.ticker}`);
             const data = await res.json();
             const p = data.profile || {};
             const pct = p.price && p.changes

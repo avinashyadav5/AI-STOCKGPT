@@ -11,7 +11,7 @@ export default function NewsPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/news?ticker=${searchTicker}`);
+      const res = await fetch(`/api/news?ticker=${searchTicker}`);
       const data = await res.json();
       setNews(data.news || []);
     } catch (err) {

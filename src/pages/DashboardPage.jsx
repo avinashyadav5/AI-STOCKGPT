@@ -9,12 +9,12 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const dbRes = await fetch("http://127.0.0.1:8000/api/watchlist");
+        const dbRes = await fetch("/api/watchlist");
         const dbData = await dbRes.json();
         const userHoldings = dbData.watchlist || [];
 
         const promises = userHoldings.map(h => 
-          fetch(`http://127.0.0.1:8000/api/profile?ticker=${h.ticker}`)
+          fetch(`/api/profile?ticker=${h.ticker}`)
             .then(res => res.json())
             .then(data => ({
               ...h,

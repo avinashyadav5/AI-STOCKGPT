@@ -37,10 +37,10 @@ export default function ChartPage({ selectedStock, setSelectedStock, livePrice, 
   const toggleWatchlist = () => {
     if (inWatchlist) {
       setWatchlist(watchlist.filter(t => t !== selectedStock));
-      fetch(`http://127.0.0.1:8000/api/watchlist/${selectedStock}`, { method: 'DELETE' }).catch(console.error);
+      fetch(`/api/watchlist/${selectedStock}`, { method: 'DELETE' }).catch(console.error);
     } else {
       setWatchlist([...watchlist, selectedStock]);
-      fetch(`http://127.0.0.1:8000/api/watchlist`, {
+      fetch(`/api/watchlist`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ticker: selectedStock, shares: 0, avg_cost: "0.0" })

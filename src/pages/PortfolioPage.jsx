@@ -18,12 +18,12 @@ export default function PortfolioPage() {
   const fetchPortfolio = async () => {
     setLoading(true);
     try {
-      const dbRes = await fetch("http://127.0.0.1:8000/api/watchlist");
+      const dbRes = await fetch("/api/watchlist");
       const dbData = await dbRes.json();
       const userHoldings = dbData.watchlist || [];
 
       const promises = userHoldings.map(h => 
-        fetch(`http://127.0.0.1:8000/api/profile?ticker=${h.ticker}`)
+        fetch(`/api/profile?ticker=${h.ticker}`)
           .then(res => res.json())
           .then(data => ({
             ...h,
@@ -50,7 +50,7 @@ export default function PortfolioPage() {
   const handleSavePosition = async () => {
     if (!addTicker) return;
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/watchlist", {
+      const res = await fetch("/api/watchlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -73,7 +73,7 @@ export default function PortfolioPage() {
   };
 
   const handleRemove = async (ticker) => {
-    await fetch(`http://127.0.0.1:8000/api/watchlist/${ticker}`, { method: "DELETE" });
+    await fetch(`/api/watchlist/${ticker}`, { method: "DELETE" });
     fetchPortfolio();
   };
 

@@ -29,7 +29,7 @@ export default function CalendarPage() {
 
   useEffect(() => {
     // Fetch from backend, fallback to mock
-    fetch("http://127.0.0.1:8000/api/calendar")
+    fetch("/api/calendar")
       .then(r => r.json())
       .then(data => {
         if (data.calendar && data.calendar.length > 0) {
